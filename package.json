@@ -1,0 +1,27 @@
+{
+  "name": "node-httpu",
+  "version": "1.0.0",
+  "description": "A HTTPU (HTTP over UDP) implementation.",
+  "main": "httpu.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BYossarian/node-httpu.git"
+  },
+  "keywords": [
+    "httpu",
+    "httpmu",
+    "http",
+    "udp",
+    "ssdp",
+    "upnp"
+  ],
+  "author": "Ben Jackson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BYossarian/node-httpu/issues"
+  },
+  "homepage": "https://github.com/BYossarian/node-httpu"
+}
