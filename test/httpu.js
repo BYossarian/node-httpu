@@ -23,7 +23,7 @@ describe('the httpu module', function() {
 
         it('has a .request method for sending HTTPU requests', function(done) {
 
-            var httpUSocket = httpu.createSocket('udp4'),
+            var httpuSocket = httpu.createSocket('udp4'),
                 socket = dgram.createSocket('udp4'),
                 expectMsg = 'POST /some/path HTTP/1.1\r\nHost: localhost:8081\r\n\r\nbody\r\n\r\n';
 
@@ -38,7 +38,7 @@ describe('the httpu module', function() {
 
             });
 
-            httpUSocket.request({
+            httpuSocket.request({
                     method: 'POST',
                     hostname: 'localhost',
                     port: 8081,
@@ -49,7 +49,7 @@ describe('the httpu module', function() {
 
         it('has a .respond method for sending HTTPU responses', function(done) {
 
-            var httpUSocket = httpu.createSocket('udp4'),
+            var httpuSocket = httpu.createSocket('udp4'),
                 socket = dgram.createSocket('udp4');
 
             socket.bind(8082, function() {
@@ -78,7 +78,7 @@ describe('the httpu module', function() {
 
             });
 
-            httpUSocket.respond({
+            httpuSocket.respond({
                     status: 200,
                     hostname: 'localhost',
                     port: 8082
@@ -86,15 +86,15 @@ describe('the httpu module', function() {
             
         });
 
-        it('has a \'httpUMessage\' event for receiving HTTPU messages', function(done) {
+        it('has a \'httpuMessage\' event for receiving HTTPU messages', function(done) {
 
-            var httpUSocket = httpu.createSocket('udp4'),
+            var httpuSocket = httpu.createSocket('udp4'),
                 socket = dgram.createSocket('udp4'),
                 msg = new Buffer('POST /some/path HTTP/1.1\r\nheader1: value1\r\nheader2: 12345\r\n\r\nbody\r\n\r\n');
 
-            httpUSocket.bind(8083, function() {
+            httpuSocket.bind(8083, function() {
 
-                httpUSocket.on('httpUMessage', function(msg, rinfo) {
+                httpuSocket.on('httpuMessage', function(msg, rinfo) {
 
                     expect(msg).to.deep.equal({
                         type: 'req',
@@ -110,11 +110,49 @@ describe('the httpu module', function() {
 
                     expect(rinfo).to.be.a('object');
 
+                    expect(this).to.equal(httpuSocket);
+
                     done();
 
                 });
 
                 socket.send(msg, 0, msg.length, 8083, 'localhost');
+
+            });
+            
+        });
+
+        it('can have \'httpuMessage\' event handlers attached on creation', function(done) {
+
+            var httpuSocket = null,
+                socket = dgram.createSocket('udp4'),
+                msg = new Buffer('POST /some/path HTTP/1.1\r\nheader1: value1\r\nheader2: 12345\r\n\r\nbody\r\n\r\n');
+
+            httpuSocket = httpu.createSocket('udp4', function(msg, rinfo) {
+
+                    expect(msg).to.deep.equal({
+                        type: 'req',
+                        method: 'POST',
+                        version: '1.1',
+                        path: '/some/path',
+                        headers: {
+                            header1: 'value1',
+                            header2: '12345'
+                        },
+                        body: 'body'
+                    });
+
+                    expect(rinfo).to.be.a('object');
+
+                    expect(this).to.equal(httpuSocket);
+
+                    done();
+
+                });
+
+            httpuSocket.bind(8084, function() {
+
+                socket.send(msg, 0, msg.length, 8084, 'localhost');
 
             });
             

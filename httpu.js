@@ -67,9 +67,22 @@ function respond(options, headers, body) {
 function createSocket(options, callback) {
 
     var udpSocket = null,
-        httpUSocket = null;
+        httpuSocket = null;
 
-    udpSocket = dgram.createSocket(options, function(msg, rinfo) {
+    udpSocket = dgram.createSocket(options);
+
+    // push udp socket one link up the prototype chain 
+    // and add httpu API to lowest level, to prevent 
+    // any possible property overwriting in the future 
+    // (property shadowing will still happen, but the 
+    // udp socket methods will still be accessible via 
+    // Object.getPrototypeOf)
+    httpuSocket = Object.create(udpSocket);
+
+    httpuSocket.request = request;
+    httpuSocket.respond = respond;
+
+    httpuSocket.on('message', function(msg, rinfo) {
 
         var parsedMsg = httpParser.parse(msg.toString());
 
@@ -78,26 +91,15 @@ function createSocket(options, callback) {
             return;
         }
 
-        this.emit('httpUMessage', parsedMsg, rinfo);
+        httpuSocket.emit('httpuMessage', parsedMsg, rinfo);
 
         if (callback) {
-            callback(parsedMsg, rinfo);
+            callback.call(httpuSocket, parsedMsg, rinfo);
         }
 
     });
 
-    // push udp socket one link up the prototype chain 
-    // and add httpu API to lowest level, to prevent 
-    // any possible property overwriting in the future 
-    // (property shadowing will still happen, but the 
-    // udp socket methods will still be accessible via 
-    // Object.getPrototypeOf)
-    httpUSocket = Object.create(udpSocket);
-
-    httpUSocket.request = request;
-    httpUSocket.respond = respond;
-
-    return httpUSocket;
+    return httpuSocket;
 
 }
 

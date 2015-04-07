@@ -8,11 +8,11 @@ A HTTPU (HTTP over UDP) implementation for node. It extends node's UDP socket wi
 `var socket = require('node-httpu').createSocket(options[, callback]);`
 
 `options` can be a string, or an object as descibed in the node API docs for UDP sockets. The optional `callback` will be added 
-as a handler for the `'httpUMessage'` event described below.
+as a handler for the `'httpuMessage'` event described below.
 
 The `socket` is an extension of node's UDP socket to include:
 
-##### Event: `'httpUMessage'`
+##### Event: `'httpuMessage'`
 
 Is emitted whenever the UDP socket receives a message that conforms to HTTP. The handler is passed the parsed message and 
 the remote address info object.
