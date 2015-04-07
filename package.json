@@ -4,7 +4,7 @@
   "description": "A HTTPU (HTTP over UDP) implementation.",
   "main": "httpu.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,9 @@
   "bugs": {
     "url": "https://github.com/BYossarian/node-httpu/issues"
   },
-  "homepage": "https://github.com/BYossarian/node-httpu"
+  "homepage": "https://github.com/BYossarian/node-httpu",
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "mocha": "^2.2.1"
+  }
 }
